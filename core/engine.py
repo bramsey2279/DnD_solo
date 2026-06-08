@@ -19,7 +19,7 @@ API_KEY = os.getenv("GEMINI_API_KEY")
 if not API_KEY:
     raise ValueError("API Key missing. Check your .env file.")
 
-BASE_DIR = "/home/brandonramsey2279/dnd_campaign"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CORE_PATH = os.path.join(BASE_DIR, "core")
 CHARS_PATH = os.path.join(BASE_DIR, "characters")
 LOGS_PATH = os.path.join(BASE_DIR, "logs")

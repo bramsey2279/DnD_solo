@@ -1,0 +1,51 @@
+{
+    "name": "Brandon",
+    "race": "Wood Elf",
+    "class": "Ranger",
+    "level": 4,
+    "xp": 3107,
+    "gold": 80,
+    "proficiency_bonus": 2,
+    "speed": 35,
+    "hit_points": 36,
+    "armor_class": 14,
+    "stats": {
+        "strength": 13,
+        "dexterity": 20,
+        "constitution": 14,
+        "intelligence": 10,
+        "wisdom": 14,
+        "charisma": 10
+    },
+    "saving_throws": [
+        "strength",
+        "dexterity"
+    ],
+    "skills": [
+        "perception",
+        "stealth",
+        "survival",
+        "animal handling"
+    ],
+    "features": [
+        "Darkvision",
+        "Fey Ancestry",
+        "Trance",
+        "Mask of the Wild",
+        "Favored Enemy",
+        "Natural Explorer",
+        "Primeval Awareness",
+        "Ranger Archetype"
+    ],
+    "traits": "Exceptional shot. Cripplingly afraid of spiders.",
+    "inventory": [
+        "Yew Longbow",
+        "Leather Armor",
+        "Dagger",
+        "20 Arrows"
+    ],
+    "spells": [
+        "Guidance",
+        "Druidcraft"
+    ]
+}

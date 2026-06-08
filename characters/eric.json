@@ -1,0 +1,48 @@
+{
+    "name": "Eric",
+    "race": "Mountain Dwarf",
+    "class": "Cleric",
+    "level": 4,
+    "xp": 3107,
+    "gold": 95,
+    "proficiency_bonus": 2,
+    "speed": 25,
+    "hit_points": 34,
+    "armor_class": 18,
+    "stats": {
+        "strength": 20,
+        "dexterity": 10,
+        "constitution": 16,
+        "intelligence": 8,
+        "wisdom": 16,
+        "charisma": 10
+    },
+    "saving_throws": [
+        "wisdom",
+        "charisma"
+    ],
+    "skills": [
+        "religion",
+        "insight",
+        "athletics"
+    ],
+    "features": [
+        "Darkvision",
+        "Dwarven Resilience",
+        "Dwarven Combat Training",
+        "Stonecunning",
+        "Forge Domain"
+    ],
+    "traits": "Stubborn as granite. No patience for fools or prevaricators.",
+    "inventory": [
+        "Warhammer",
+        "Chainmail",
+        "Steel Shield",
+        "Holy Symbol of Moradin"
+    ],
+    "spells": [
+        "Sacred Flame",
+        "Cure Wounds",
+        "Spiritual Weapon"
+    ]
+}

@@ -1,0 +1,46 @@
+{
+    "name": "Lilly",
+    "race": "Human",
+    "class": "Wizard",
+    "level": 4,
+    "xp": 3107,
+    "gold": 100,
+    "proficiency_bonus": 2,
+    "speed": 30,
+    "hit_points": 26,
+    "armor_class": 12,
+    "stats": {
+        "strength": 8,
+        "dexterity": 14,
+        "constitution": 14,
+        "intelligence": 20,
+        "wisdom": 14,
+        "charisma": 12
+    },
+    "saving_throws": [
+        "intelligence",
+        "wisdom"
+    ],
+    "skills": [
+        "arcana",
+        "history",
+        "investigation"
+    ],
+    "features": [
+        "Spellcasting",
+        "Arcane Recovery"
+    ],
+    "traits": "Brilliant and empathetic, but clumsy.",
+    "inventory": [
+        "Grey Robes",
+        "Wooden Staff",
+        "Spellbook",
+        "Component Pouch"
+    ],
+    "spells": [
+        "Shocking Grasp",
+        "Prestidigitation",
+        "Healing Word",
+        "Misty Step"
+    ]
+}

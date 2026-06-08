@@ -1,0 +1,53 @@
+{
+    "name": "Lyra",
+    "race": "High Elf",
+    "class": "Rogue",
+    "level": 4,
+    "xp": 3107,
+    "gold": 100,
+    "proficiency_bonus": 2,
+    "speed": 30,
+    "hit_points": 28,
+    "armor_class": 14,
+    "stats": {
+        "strength": 10,
+        "dexterity": 20,
+        "constitution": 13,
+        "intelligence": 15,
+        "wisdom": 10,
+        "charisma": 13
+    },
+    "saving_throws": [
+        "dexterity",
+        "intelligence"
+    ],
+    "skills": [
+        "stealth",
+        "sleight of hand",
+        "acrobatics",
+        "perception",
+        "deception"
+    ],
+    "features": [
+        "Darkvision",
+        "Fey Ancestry",
+        "Trance",
+        "Sneak Attack",
+        "Thieves' Cant",
+        "Expertise",
+        "Cunning Action",
+        "Roguish Archetype"
+    ],
+    "traits": "Dry wit, sharp eyes. Utter disdain for authority and rules.",
+    "inventory": [
+        "Twin Daggers",
+        "Hand Crossbow",
+        "Dark Leather Armor",
+        "Thieves' Tools",
+        "Tarnished Silver-Starred Spellbook"
+    ],
+    "spells": [
+        "Mage Hand",
+        "Booming Blade"
+    ]
+}

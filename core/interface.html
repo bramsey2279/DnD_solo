@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RPG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        body { background: #050505; color: #d4d4d4; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        #header { background: #0a0f14; padding: 10px 15px; border-bottom: 1px solid #1a232c; display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: bold; letter-spacing: 1px; color: #00d4ff; flex-shrink: 1; }
+        .tabs { display: flex; background: #080c10; flex-shrink: 0; border-bottom: 1px solid #1a232c; }
+        .tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; border-bottom: 2px solid transparent; font-size: 0.8rem; color: #666; font-weight: bold; }
+        .active-tab { border-bottom: 2px solid #00d4ff; background: #0a0f14; color: #00d4ff; }
+        #chat-area, #gallery-area { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; }
+        #gallery-area { display: none; grid-template-columns: repeat(3, 1fr); gap: 10px; align-content: start; }
+        #gallery-area img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 4px; border: 1px solid #1a232c; }
+        #input-area { padding: 12px; display: flex; gap: 8px; background: #0a0f14; border-top: 1px solid #1a232c; flex-shrink: 0; }
+        input { flex: 1; background: #12181f; color: #fff; border: 1px solid #2a3542; padding: 12px; border-radius: 6px; outline: none; font-size: 15px; }
+        input:focus { border-color: #00d4ff; }
+        button { background: #005f73; color: white; border: none; padding: 0 18px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #0a9396; }
+        
+        /* New sleek message styling */
+        .msg { background: #12181f; border: 1px solid #1a232c; padding: 12px 15px; border-radius: 8px; border-left: 4px solid #00d4ff; line-height: 1.5; font-size: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .msg b { color: #00d4ff; font-size: 15px; }
+        .sys-msg { background: #1a1a00; border-left: 4px solid #ffcc00; color: #ddd; font-style: italic; }
+        .combat-indicator { color: #ff4d4d; font-weight: bold; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body onload="loadHistory()">
+    <div id="header">
+        <span>MIKE'S DUNGEON</span> 
+        <span id="st">🟢 ONLINE</span>
+    </div>
+    <div class="tabs">
+        <div class="tab active-tab" id="t-chat" onclick="showTab('chat')">CHAT</div>
+        <div class="tab" id="t-gal" onclick="showTab('gal')">IMAGES</div>
+    </div>
+    <div id="chat-area"></div>
+    <div id="gallery-area"></div>
+    <div id="input-area">
+        <input type="file" id="file-in" style="display:none" onchange="uploadFile()">
+        <button onclick="document.getElementById('file-in').click()">📎</button>
+        <input type="text" id="m-in" placeholder="What do you do?" onkeydown="if(event.key==='Enter') send()">
+        <button onclick="send()">ACTION</button>
+        <button onclick="triggerAgentChat()" style="background: #4a2a41; color: #f0e6f0;">Banter</button>
+    </div>
+    
+    <script>
+        function showTab(type) {
+            const ca = document.getElementById('chat-area'), ga = document.getElementById('gallery-area');
+            if(type==='chat') {
+                ca.style.display='flex'; ga.style.display='none';
+                document.getElementById('t-chat').classList.add('active-tab');
+                document.getElementById('t-gal').classList.remove('active-tab');
+            } else {
+                ca.style.display='none'; ga.style.display='grid';
+                document.getElementById('t-gal').classList.add('active-tab');
+                document.getElementById('t-chat').classList.remove('active-tab');
+                loadGallery();
+            }
+        }
+
+        async function loadHistory() {
+            const r = await fetch('/history'); const t = await r.text();
+            t.split('---').forEach(e => {
+                if(e.trim()) {
+                    const d = document.createElement('div'); d.className='msg'; d.innerHTML=e.trim().replace(/\n/g, '<br>');
+                    document.getElementById('chat-area').appendChild(d);
+                }
+            });
+            document.getElementById('chat-area').scrollTop = document.getElementById('chat-area').scrollHeight;
+        }       
+
+        async function send(autoMessage = null) {
+            const i = document.getElementById('m-in'); 
+            const m = autoMessage !== null ? autoMessage : i.value.trim(); 
+            
+            if(!m) return;
+            if(autoMessage === null) i.value = ''; 
+
+            const ca = document.getElementById('chat-area');
+            
+            if (m !== "***") {
+                const d = document.createElement('div'); 
+                d.className = 'msg'; 
+                d.innerHTML = '<b>Brandon:</b><br>' + m;
+                ca.appendChild(d);
+            }
+
+            const loading = document.createElement('div');
+            loading.className = 'msg sys-msg';
+            loading.innerHTML = 'The DM is thinking...';
+            ca.appendChild(loading);
+            ca.scrollTop = ca.scrollHeight;
+
+            const r = await fetch('/chat', {
+                method: 'POST', 
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}, 
+                body: 'msg=' + encodeURIComponent(m)
+            });
+            
+            const data = await r.json();
+            loading.remove();
+
+            // Break apart the giant HTML block into individual polished message bubbles
+            const parts = data.html.split("<br><br>");
+            parts.forEach(part => {
+                if(part.trim()) {
+                    const reply = document.createElement('div'); 
+                    reply.className = 'msg'; 
+                    reply.innerHTML = part;
+                    ca.appendChild(reply);
+                }
+            });
+            
+            ca.scrollTop = ca.scrollHeight;
+
+            // Update Header Status
+            const st = document.getElementById('st');
+            if (data.combat_active) {
+                st.innerHTML = `<span class="combat-indicator">⚔️ COMBAT: ${data.whose_turn.toUpperCase()}'S TURN</span>`;
+            } else {
+                st.innerHTML = `🟢 EXPLORING`;
+            }
+
+            // AUTO COMBAT LOOP
+            // Sanitize the string just in case Mike adds a space or weird capitalization
+            const currentTurn = data.whose_turn ? data.whose_turn.toLowerCase().trim() : "brandon";
+            const inputBox = document.getElementById('m-in');
+            
+            // Find the Action button to disable it
+            const actionBtn = document.querySelector('button[onclick="send()"]');
+
+            if (data.combat_active && currentTurn !== "brandon") {
+                // Lock the player out so you can't submit multiple actions
+                inputBox.disabled = true;
+                inputBox.placeholder = `Waiting for ${data.whose_turn}...`;
+                actionBtn.disabled = true;
+
+                const sysMsg = document.createElement('div');
+                sysMsg.className = 'msg sys-msg';
+                sysMsg.innerHTML = `[Auto-advancing to ${data.whose_turn}'s turn in 4s...]`;
+                ca.appendChild(sysMsg);
+                ca.scrollTop = ca.scrollHeight;
+
+                setTimeout(() => {
+                    send("***");
+                }, 4000); 
+            } else {
+                // It is your turn (or combat ended). Unlock the controls.
+                inputBox.disabled = false;
+                inputBox.placeholder = "What do you do?";
+                actionBtn.disabled = false;
+                inputBox.focus();
+            }
+        }      
+       async function triggerAgentChat() {
+            const ca = document.getElementById('chat-area');
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'msg sys-msg';
+            statusDiv.innerHTML = 'Agents are bantering...';
+            ca.appendChild(statusDiv);
+            ca.scrollTop = ca.scrollHeight;
+
+            try {
+                const response = await fetch('/agent_chat', { method: 'POST' });
+                const data = await response.text();
+                statusDiv.remove();
+                
+                const parts = data.split("<br><br>");
+                parts.forEach(part => {
+                    if(part.trim()) {
+                        const reply = document.createElement('div'); 
+                        reply.className = 'msg'; 
+                        reply.innerHTML = part;
+                        ca.appendChild(reply);
+                    }
+                });
+            } catch (err) {
+                statusDiv.innerHTML = '<b>System Error:</b> Banter loop failed.';
+            }
+            ca.scrollTop = ca.scrollHeight;
+        }
+ 
+        async function uploadFile() {
+            const fileInput = document.getElementById('file-in');
+            if (fileInput.files.length === 0) return;
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            const d = document.createElement('div');
+            d.className = 'msg sys-msg'; d.innerHTML = 'Uploading file...';
+            document.getElementById('chat-area').appendChild(d);
+            const r = await fetch('/upload', { method: 'POST', body: formData });
+            const result = await r.text();
+            d.innerHTML = '<b>System:</b> ' + result;
+        }
+
+        async function loadGallery() {
+            const r = await fetch('/gallery'); const imgs = await r.json();
+            const g = document.getElementById('gallery-area'); g.innerHTML='';
+            imgs.forEach(src => {
+                const img = document.createElement('img'); img.src='/gen_img/'+src;
+                img.onclick = () => window.open(img.src, '_blank');
+                g.appendChild(img);
+            });
+        }
+    </script>
+</body>
+</html>
